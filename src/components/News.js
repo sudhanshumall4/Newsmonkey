@@ -17,6 +17,7 @@ export class News extends Component {
     country: PropTypes.string,
     pageSize: PropTypes.number,
     category: PropTypes.string,
+    setProgress: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -43,11 +44,12 @@ export class News extends Component {
 
   // Fetch news data from the API
   fetchNews = async () => {
+    this.props.setProgress(0);
     this.setState({ loading: true });
     const { page } = this.state;
     const { pageSize, country, category } = this.props;
 
-    const url = `https://newsapi.org/v2/top-headlines?country=${country}&category=${category}&apiKey=34b6c822236847ada19ba98940635e8b&page=${page}&pageSize=${pageSize}`;
+    const url = `https://newsapi.org/v2/top-headlines?country=${country}&category=${category}&apiKey=${this.props.apiKey}&page=${page}&pageSize=${pageSize}`;
     try {
       const data = await fetch(url);
       if (!data.ok) throw new Error(`HTTP error! status: ${data.status}`);
@@ -61,6 +63,7 @@ export class News extends Component {
       console.error("Error fetching news:", error);
       this.setState({ loading: false });
     }
+    this.props.setProgress(100);
   };
 
   // Fetch more data for Infinite Scroll
